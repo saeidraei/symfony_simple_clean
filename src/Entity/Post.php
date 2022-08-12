@@ -25,6 +25,13 @@ class Post
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
@@ -47,5 +54,14 @@ class Post
         $this->body = $body;
 
         return $this;
+    }
+
+    public function toArray():array
+    {
+        return [
+            'id'=>$this->getId(),
+            'title'=>$this->getTitle(),
+            'body'=>$this->getBody(),
+        ];
     }
 }

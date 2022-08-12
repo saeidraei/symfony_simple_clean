@@ -14,20 +14,20 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Post[]    findAll()
  * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostRepository extends ServiceEntityRepository
+class PostRepository extends ServiceEntityRepository implements PostRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
     }
 
-    public function add(Post $entity, bool $flush = false): void
+    public function add(Post $post): Post
     {
-        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->persist($post);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        $this->getEntityManager()->flush();
+
+        return $post;
     }
 
     public function remove(Post $entity, bool $flush = false): void
@@ -39,28 +39,35 @@ class PostRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Post[] Returns an array of Post objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?Post
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getAll(): array
+    {
+        return $this->findAll();
+    }
+
+    public function findOneById(int $id): ?Post
+    {
+        return $this->find($id);
+    }
+
+    public function update(Post $post): ?Post
+    {
+        //this code may seem odd but this is how doctrine works
+        $originalPost = $this->findOneById($post->getId());
+        $originalPost->setBody($post->getBody());
+        $originalPost->setTitle($post->getTitle());
+        $this->getEntityManager()->flush();
+
+        return $post;
+    }
+
+    public function delete(int $id): bool
+    {
+        $post = $this->findOneById($id);
+        $this->getEntityManager()->remove($post);
+        $this->getEntityManager()->flush();
+
+        //just returning true for now
+        return true;
+    }
 }
