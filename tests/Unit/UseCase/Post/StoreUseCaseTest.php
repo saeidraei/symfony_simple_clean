@@ -4,10 +4,9 @@ namespace App\Tests\Unit\UseCase\Post;
 use App\Entity\Post;
 use App\Repository\Fake\PostRepository;
 use App\UseCase\Post\StoreUseCase;
-use App\UseCase\Post\IndexUseCase;
 use PHPUnit\Framework\TestCase;
 
-class AddUseCaseTest extends TestCase{
+class StoreUseCaseTest extends TestCase{
     public function testExecuteNormalCase()
     {
         $postRepository = new PostRepository();
